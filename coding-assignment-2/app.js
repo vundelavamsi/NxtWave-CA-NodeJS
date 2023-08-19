@@ -343,11 +343,13 @@ app.get("/user/tweets/", authenticateToken, async (request, response) => {
 app.post("/user/tweets", authenticateToken, async (request, response) => {
     const { tweetDetails } = request.body;
     const userId = request.payload.user_id;
+    const date = format(new Date(date));
+    console.log(date);
     const createTweetQuery = `
     INSERT into tweet
-        (tweet, user_id)
+        (tweet, user_id, date_time)
     VALUES
-        ('${tweetDetails}', ${userId});
+        ('${tweetDetails}', ${userId}, '2023-08-18');
     `;
     await db.run(createTweetQuery);
     // console.log(addTweet.lastID);
