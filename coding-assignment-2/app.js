@@ -341,17 +341,25 @@ app.get("/user/tweets/", authenticateToken, async (request, response) => {
 
 //API 10
 app.post("/user/tweets", authenticateToken, async (request, response) => {
-    const { tweetDetails } = request.body;
-    const userId = request.payload.user_id;
-    const date = format(new Date(date));
-    console.log(date);
+    const { tweet } = request.body;
+    // const userId = request.payload.user_id;
+    const {username} = request.payload;
+    console.log(username);    
+    const getUserIdQuery = `SELECT user_id from user where username = '${username}';`;
+    const { user_id } = await db.get(getUserIdQuery);
+    const newDate = new Date();
+    console.log(newDate);
     const createTweetQuery = `
     INSERT into tweet
         (tweet, user_id, date_time)
     VALUES
-        ('${tweetDetails}', ${userId}, '2023-08-18');
+        (
+            '${tweet}', ${user_id}, 
+            '${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()} ${newDate.getHours()}:${newDate.getMinutes()}:${newDate.getSeconds()}'
+            );
     `;
     await db.run(createTweetQuery);
+    console.log(createTweetQuery);
     // console.log(addTweet.lastID);
     response.send("Created a Tweet");
 });
